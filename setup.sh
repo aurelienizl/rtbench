@@ -7,6 +7,7 @@ REQUIRED_PACKAGES=(
     python3-venv
     build-essential
     libnuma-dev
+    stress-ng
 )
 
 install_packages() {
