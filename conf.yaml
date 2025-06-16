@@ -1,0 +1,83 @@
+# benchmarks/rtbench-4core.yaml
+
+rtbench:
+
+  # ── 0% load ───────────────────────────────────────────────────────────────
+  - name: load-0
+    global:
+      runs: 3
+    loadgen:
+      cmd: ["stress-ng", "--cpu", "4", "--cpu-load", "0", "--timeout", "60s"]
+      settle_sec: 1
+    lattest:
+      cmd: [
+        "cyclictest", "--mlockall", "--smp",
+        "--priority", "80", "--interval", "200",
+        "--duration", "60s",
+        "-h", "400000",
+        "--json"
+      ]
+
+  # ── 25% load ──────────────────────────────────────────────────────────────
+  - name: load-25
+    global:
+      runs: 3
+    loadgen:
+      cmd: ["stress-ng", "--cpu", "4", "--cpu-load", "25", "--timeout", "60s"]
+      settle_sec: 2
+    lattest:
+      cmd: [
+        "cyclictest", "--mlockall", "--smp",
+        "--priority", "80", "--interval", "200",
+        "--duration", "60s",
+        "-h", "400000",
+        "--json"
+      ]
+
+  # ── 50% load ──────────────────────────────────────────────────────────────
+  - name: load-50
+    global:
+      runs: 3
+    loadgen:
+      cmd: ["stress-ng", "--cpu", "4", "--cpu-load", "50", "--timeout", "60s"]
+      settle_sec: 2
+    lattest:
+      cmd: [
+        "cyclictest", "--mlockall", "--smp",
+        "--priority", "80", "--interval", "200",
+        "--duration", "60s",
+        "-h", "400000",
+        "--json"
+      ]
+
+  # ── 75% load ──────────────────────────────────────────────────────────────
+  - name: load-75
+    global:
+      runs: 3
+    loadgen:
+      cmd: ["stress-ng", "--cpu", "4", "--cpu-load", "75", "--timeout", "60s"]
+      settle_sec: 2
+    lattest:
+      cmd: [
+        "cyclictest", "--mlockall", "--smp",
+        "--priority", "80", "--interval", "200",
+        "--duration", "60s",
+        "-h", "400000",
+        "--json"
+      ]
+
+  # ── 100% load ─────────────────────────────────────────────────────────────
+  - name: load-100
+    global:
+      runs: 3
+    loadgen:
+      cmd: ["stress-ng", "--cpu", "4", "--cpu-load", "100", "--timeout", "60s"]
+      settle_sec: 2
+    lattest:
+      cmd: [
+        "cyclictest", "--mlockall", "--smp",
+        "--priority", "80", "--interval", "200",
+        "--duration", "60s",
+        "-h", "400000",
+        "--json"
+      ]
