@@ -1,28 +1,14 @@
 # benchmarks/rtbench-4core.yaml
 #
-# Mixed-resource stress profile (CPU + memory + I/O + scheduler + timers)
-# for five load levels on a 4-core machine.
-#
-# ───────────────────────────────────────────────────────────────────────────
-# legend:
-#   --cpu-load  : duty-cycle % for pure CPU work
-#   --vm-bytes  : % of free RAM touched by each vm worker
-#   --io / --hdd: light block-layer pressure (tmpfs + write-back)
-#   --sched     : workers that continually yield() to force ctx-switches
-#   --timer     : userspace high-res timer hammering
-#   runs        : how many times to repeat the whole pair (stress + cyclictest)
-#
-# The 60 s timeout of stress-ng matches cyclictest’s 60 s measurement window
-# so both start and finish together.
-# ───────────────────────────────────────────────────────────────────────────
+# Mixed-resource stress profile for five load levels (4-core host)
+# --------------------------------------------------------------------------
 
 rtbench:
 
-  # ── 0 % load ─────────────────────────────────────────────────────────────
+  # ── 0 % load ──────────────────────────────────────────────────────────────
   - name: load-0
     global: { runs: 3 }
     loadgen:
-      # ≈ idle CPU, minimal but non-zero system noise
       cmd: [
         "stress-ng",
         "--timeout",      "60s",
@@ -31,7 +17,6 @@ rtbench:
         "--vm",           "2",  "--vm-bytes",  "20%", "--vm-keep",
         "--io",           "1",
         "--hdd",          "1",  "--hdd-write-size", "16K",
-        "--sched",        "1",
         "--timer",        "1",
         "--tz"
       ]
@@ -45,7 +30,7 @@ rtbench:
         "--json"
       ]
 
-  # ── 25 % load ────────────────────────────────────────────────────────────
+  # ── 25 % load ─────────────────────────────────────────────────────────────
   - name: load-25
     global: { runs: 3 }
     loadgen:
@@ -57,7 +42,6 @@ rtbench:
         "--vm",           "2",  "--vm-bytes",  "60%", "--vm-keep",
         "--io",           "2",
         "--hdd",          "1",  "--hdd-write-size", "16K",
-        "--sched",        "2",
         "--timer",        "2",
         "--tz"
       ]
@@ -71,7 +55,7 @@ rtbench:
         "--json"
       ]
 
-  # ── 50 % load ────────────────────────────────────────────────────────────
+  # ── 50 % load ─────────────────────────────────────────────────────────────
   - name: load-50
     global: { runs: 3 }
     loadgen:
@@ -83,7 +67,6 @@ rtbench:
         "--vm",           "2",  "--vm-bytes",  "75%", "--vm-keep",
         "--io",           "3",
         "--hdd",          "1",  "--hdd-write-size", "16K",
-        "--sched",        "3",
         "--timer",        "3",
         "--tz"
       ]
@@ -97,7 +80,7 @@ rtbench:
         "--json"
       ]
 
-  # ── 75 % load ────────────────────────────────────────────────────────────
+  # ── 75 % load ─────────────────────────────────────────────────────────────
   - name: load-75
     global: { runs: 3 }
     loadgen:
@@ -109,7 +92,6 @@ rtbench:
         "--vm",           "2",  "--vm-bytes",  "90%", "--vm-keep",
         "--io",           "4",
         "--hdd",          "1",  "--hdd-write-size", "16K",
-        "--sched",        "4",
         "--timer",        "4",
         "--tz"
       ]
@@ -123,7 +105,7 @@ rtbench:
         "--json"
       ]
 
-  # ── 100 % load ───────────────────────────────────────────────────────────
+  # ── 100 % load ────────────────────────────────────────────────────────────
   - name: load-max
     global: { runs: 3 }
     loadgen:
@@ -135,7 +117,6 @@ rtbench:
         "--vm",           "2",  "--vm-bytes",  "95%", "--vm-keep",
         "--io",           "4",
         "--hdd",          "1",  "--hdd-write-size", "16K",
-        "--sched",        "4",
         "--timer",        "4",
         "--tz"
       ]
