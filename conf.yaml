@@ -7,7 +7,7 @@ rtbench:
     global:
       runs: 3
     loadgen:
-      cmd: ["stress-ng", "--cpu", "4", "--cpu-load", "0", "--timeout", "60s"]
+      cmd: ["stress-ng", "--cpu-method", "matrixprod", "--cpu", "4", "--cpu-load", "0", "--timeout", "60s"]
       settle_sec: 1
     lattest:
       cmd: [
@@ -23,7 +23,7 @@ rtbench:
     global:
       runs: 3
     loadgen:
-      cmd: ["stress-ng", "--cpu", "4", "--cpu-load", "25", "--timeout", "60s"]
+      cmd: ["stress-ng", "--cpu-method", "matrixprod", "--cpu", "4", "--cpu-load", "25", "--timeout", "60s"]
       settle_sec: 2
     lattest:
       cmd: [
@@ -39,7 +39,7 @@ rtbench:
     global:
       runs: 3
     loadgen:
-      cmd: ["stress-ng", "--cpu", "4", "--cpu-load", "50", "--timeout", "60s"]
+      cmd: ["stress-ng", "--cpu-method", "matrixprod", "--cpu", "4", "--cpu-load", "50", "--timeout", "60s"]
       settle_sec: 2
     lattest:
       cmd: [
@@ -55,7 +55,7 @@ rtbench:
     global:
       runs: 3
     loadgen:
-      cmd: ["stress-ng", "--cpu", "4", "--cpu-load", "75", "--timeout", "60s"]
+      cmd: ["stress-ng", "--cpu-method", "matrixprod", "--cpu", "4", "--cpu-load", "75", "--timeout", "60s"]
       settle_sec: 2
     lattest:
       cmd: [
@@ -71,7 +71,7 @@ rtbench:
     global:
       runs: 3
     loadgen:
-      cmd: ["stress-ng", "--cpu", "4", "--cpu-load", "100", "--timeout", "60s"]
+      cmd: ["stress-ng", "--cpu-method", "matrixprod", "--cpu", "4", "--cpu-load", "100", "--timeout", "60s"]
       settle_sec: 2
     lattest:
       cmd: [
