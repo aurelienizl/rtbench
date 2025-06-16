@@ -12,7 +12,7 @@ rtbench:
     lattest:
       cmd: [
         "cyclictest", "--mlockall", "--smp",
-        "--priority", "80", "--interval", "200",
+        "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
         "--json"
@@ -28,7 +28,7 @@ rtbench:
     lattest:
       cmd: [
         "cyclictest", "--mlockall", "--smp",
-        "--priority", "80", "--interval", "200",
+        "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
         "--json"
@@ -44,7 +44,7 @@ rtbench:
     lattest:
       cmd: [
         "cyclictest", "--mlockall", "--smp",
-        "--priority", "80", "--interval", "200",
+        "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
         "--json"
@@ -60,7 +60,7 @@ rtbench:
     lattest:
       cmd: [
         "cyclictest", "--mlockall", "--smp",
-        "--priority", "80", "--interval", "200",
+        "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
         "--json"
@@ -76,7 +76,7 @@ rtbench:
     lattest:
       cmd: [
         "cyclictest", "--mlockall", "--smp",
-        "--priority", "80", "--interval", "200",
+        "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
         "--json"
