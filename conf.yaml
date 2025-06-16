@@ -67,7 +67,7 @@ rtbench:
       ]
 
   # ── 100% load ─────────────────────────────────────────────────────────────
-  - name: load-100
+  - name: load-max
     global:
       runs: 3
     loadgen:
