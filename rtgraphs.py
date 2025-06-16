@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
-"""rtgraphs – research-grade latency visualiser for *rtbench* outputs
+"""rtgraphs – research‑grade latency visualiser for *rtbench* outputs
 --------------------------------------------------------------------
 Figures written to <results>/figures (or --outdir):
 
-* timeline_mean.png  – mean ±95 % CI latency, 1 s bins
-* heatmap.png        – mean latency heat-map (time × workload)
-* ecdf.png           – ECDF of all latencies (log-x)
-* boxplot.png        – run-to-run mean-latency variability
+* timeline_mean.png   – mean ±95 % CI latency, 1 s bins
+* timeline_p99.png    – 99th‑percentile latency (worst 1 %), 1 s bins
+* timeline_max.png    – worst‑case (max) latency, 1 s bins
+* heatmap.png         – mean latency heat‑map (time × workload)
+* boxplot.png         – run‑to‑run mean‑latency variability
+* boxplot_p99.png     – run‑to‑run 99th‑percentile latency variability
+* boxplot_max.png     – run‑to‑run worst‑case latency variability
+* ecdf.png            – ECDF of all latencies (log‑x)
 """
 from __future__ import annotations
 
@@ -32,12 +36,12 @@ try:
 except ImportError:
     pass
 
-# ── Matplotlib defaults (paper-friendly & colour-blind) ───────────────────
+# ── Matplotlib defaults (paper‑friendly & colour‑blind) ───────────────────
 plt.rcParams.update(
     {
         "figure.dpi": 120,
         "font.size": 10,
-        "font.family": "sans-serif",
+        "font.family": "sans‑serif",
         "axes.spines.top": False,
         "axes.spines.right": False,
     }
@@ -45,6 +49,7 @@ plt.rcParams.update(
 PALETTE = plt.get_cmap("tab10").colors
 
 # ╔══════════════ helpers ══════════════════════════════════════════════════╗
+
 def _ts(ts: str):
     try:
         return datetime.strptime(ts, "%a, %d %b %Y %H:%M:%S %z")
@@ -87,7 +92,8 @@ def latencies(run: Path) -> np.ndarray:
         if ":" in ln:
             try:
                 b, c = ln.split(":", 1)
-                bins.append(float(b)); cnts.append(int(c))
+                bins.append(float(b))
+                cnts.append(int(c))
             except ValueError:
                 pass
     return (
@@ -119,6 +125,8 @@ def summarise(run: Path):
         "samples": sam,
         "interval": dur / sam.size,
         "mean": float(np.mean(sam)),
+        "p99": float(np.percentile(sam, 99)),
+        "max": float(np.max(sam)),
     }
 
 
@@ -133,6 +141,7 @@ def load_results(root: Path):
 
 
 # ╔══════════════ statistics ═══════════════════════════════════════════════╗
+
 def mean_ci(arr: np.ndarray, axis=0, conf=0.95):
     μ = np.nanmean(arr, axis=axis)
     sem = stats.sem(arr, axis=axis, nan_policy="omit", ddof=0)
@@ -141,8 +150,47 @@ def mean_ci(arr: np.ndarray, axis=0, conf=0.95):
     return μ, h
 
 
+# ╔══════════════ generic helpers for timeline stats ═══════════════════════╗
+
+def _fill_per_second(r, secs: np.ndarray, stat: str) -> np.ndarray:
+    """Return per‑second statistic for a single run (mean, max, p99)."""
+    sam = r["samples"]
+    times = np.arange(sam.size) * r["interval"]
+    res = np.full_like(secs, np.nan, dtype=np.float64)
+    for s in secs:
+        sel = (times >= s) & (times < s + 1)
+        if sel.any():
+            vals = sam[sel]
+            if stat == "mean":
+                res[s] = np.mean(vals)
+            elif stat == "max":
+                res[s] = np.max(vals)
+            elif stat == "p99":
+                res[s] = np.percentile(vals, 99)
+    return res
+
+
 # ╔══════════════ plots ════════════════════════════════════════════════════╗
+
 def plot_timeline(summary, out: Path):
+    """Mean (±CI) latency per second."""
+    _plot_timeline_stat(summary, out, stat="mean",
+                        title="Mean scheduling latency (±95 % CI)")
+
+
+def plot_timeline_p99(summary, out: Path):
+    """99th‑percentile latency per second."""
+    _plot_timeline_stat(summary, out, stat="p99",
+                        title="99th‑percentile scheduling latency (±95 % CI)")
+
+
+def plot_timeline_max(summary, out: Path):
+    """Worst‑case (max) latency per second."""
+    _plot_timeline_stat(summary, out, stat="max",
+                        title="Worst‑case scheduling latency (±95 % CI)")
+
+
+def _plot_timeline_stat(summary, out: Path, *, stat: str, title: str):
     if not summary:
         return
     max_sec = int(np.ceil(max(r["duration"] for b in summary for r in b["runs"])))
@@ -152,13 +200,7 @@ def plot_timeline(summary, out: Path):
     for j, ent in enumerate(summary):
         per_run = np.full((len(ent["runs"]), max_sec), np.nan)
         for i, r in enumerate(ent["runs"]):
-            sam = r["samples"]
-            times = np.arange(sam.size) * r["interval"]
-            for s in secs:
-                sel = (times >= s) & (times < s + 1)
-                if sel.any():
-                    per_run[i, s] = np.mean(sam[sel])
-            del sam, times
+            per_run[i] = _fill_per_second(r, secs, stat)
         μ, h = mean_ci(per_run)
         col = PALETTE[j % 10]
         plt.plot(secs, μ, lw=1.3, color=col, label=ent["name"])
@@ -168,7 +210,7 @@ def plot_timeline(summary, out: Path):
 
     plt.xlabel("Time [s]")
     plt.ylabel("Latency [µs]")
-    plt.title("Mean scheduling latency (±95 % CI)")
+    plt.title(title)
     plt.grid(True, linestyle=":")
 
     # ── legend outside ────────────────────────────────────────────────────
@@ -184,9 +226,27 @@ def plot_timeline(summary, out: Path):
 
 
 def plot_box(summary, out: Path):
+    _plot_box_generic(summary, out, key="mean",
+                      ylabel="Run‑mean latency [µs]",
+                      title="Run‑to‑run variability per workload")
+
+
+def plot_box_p99(summary, out: Path):
+    _plot_box_generic(summary, out, key="p99",
+                      ylabel="Run 99th‑percentile latency [µs]",
+                      title="Run‑to‑run P99 variability per workload")
+
+
+def plot_box_max(summary, out: Path):
+    _plot_box_generic(summary, out, key="max",
+                      ylabel="Run worst‑case latency [µs]",
+                      title="Run‑to‑run worst‑case latency variability")
+
+
+def _plot_box_generic(summary, out: Path, *, key: str, ylabel: str, title: str):
     if not summary:
         return
-    data = [[r["mean"] for r in ent["runs"]] for ent in summary]
+    data = [[r[key] for r in ent["runs"]] for ent in summary]
     labels = [ent["name"] for ent in summary]
 
     plt.figure(figsize=(4.2, 3.0))
@@ -197,8 +257,8 @@ def plot_box(summary, out: Path):
         patch.set_alpha(0.5)
 
     plt.xticks(range(1, len(labels) + 1), labels)
-    plt.ylabel("Run-mean latency [µs]")
-    plt.title("Run-to-run variability per workload")
+    plt.ylabel(ylabel)
+    plt.title(title)
     plt.grid(axis="y", linestyle=":")
     plt.tight_layout()
     plt.savefig(out)
@@ -255,11 +315,7 @@ def plot_heatmap(summary, out: Path):
     for i, ent in enumerate(summary):
         per_run = np.full((len(ent["runs"]), max_sec), np.nan)
         for j, r in enumerate(ent["runs"]):
-            times = np.arange(r["samples"].size) * r["interval"]
-            for s in secs:
-                sel = (times >= s) & (times < s + 1)
-                if sel.any():
-                    per_run[j, s] = np.mean(r["samples"][sel])
+            per_run[j] = _fill_per_second(r, secs, "mean")
         grid[i] = np.nanmean(per_run, axis=0)
 
     plt.figure(figsize=(4.8, 3.0))
@@ -269,16 +325,17 @@ def plot_heatmap(summary, out: Path):
     plt.yticks(np.arange(len(summary)), [e["name"] for e in summary])
     plt.xlabel("Time [s]")
     plt.ylabel("Workload")
-    plt.title("Latency heat-map (mean per second)")
+    plt.title("Latency heat‑map (mean per second)")
     plt.tight_layout()
     plt.savefig(out)
     plt.close()
 
 
 # ╔══════════════ CLI / main ═══════════════════════════════════════════════╗
+
 def cli() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Generate research-grade latency plots for rtbench results",
+        description="Generate research‑grade latency plots for rtbench results",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     p.add_argument("results", type=Path, help="rtbench results directory")
@@ -299,11 +356,21 @@ def main() -> None:
     if not summary:
         sys.exit("Error: no valid runs found")
 
-    summary.sort(key=lambda e: e["name"]) 
+    summary.sort(key=lambda e: e["name"])
+
+    # ── mean‑focused visuals ──────────────────────────────────────────────
     plot_timeline(summary, outdir / "timeline_mean.png")
     plot_box(summary,      outdir / "boxplot.png")
-    plot_ecdf(summary,     outdir / "ecdf.png")
     plot_heatmap(summary,  outdir / "heatmap.png")
+
+    # ── worst‑case visuals ────────────────────────────────────────────────
+    plot_timeline_p99(summary, outdir / "timeline_p99.png")
+    plot_timeline_max(summary, outdir / "timeline_max.png")
+    plot_box_p99(summary,      outdir / "boxplot_p99.png")
+    plot_box_max(summary,      outdir / "boxplot_max.png")
+
+    # ── distribution‑wide visual ──────────────────────────────────────────
+    plot_ecdf(summary,     outdir / "ecdf.png")
 
     print("✓ Plots saved to", outdir)
 
