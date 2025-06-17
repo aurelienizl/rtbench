@@ -18,12 +18,13 @@ rtbench:
         "--io",           "1",
         "--hdd",          "1",  "--hdd-write-size", "16K",
         "--timer",        "1",
-        "--tz"
+        "--tz",
+        "--taskset", "3"  # Affinity to CPU 3
       ]
       settle_sec: 1
     lattest:
       cmd: [
-        "cyclictest", "--mlockall",
+        "cyclictest", "--mlockall", "--quiet",
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
@@ -44,12 +45,13 @@ rtbench:
         "--io",           "2",
         "--hdd",          "1",  "--hdd-write-size", "16K",
         "--timer",        "2",
-        "--tz"
+        "--tz", 
+        "--taskset", "3"  # Affinity to CPU 3
       ]
       settle_sec: 2
     lattest:
       cmd: [
-        "cyclictest", "--mlockall", 
+        "cyclictest", "--mlockall", "--quiet",
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
@@ -70,12 +72,13 @@ rtbench:
         "--io",           "3",
         "--hdd",          "1",  "--hdd-write-size", "16K",
         "--timer",        "3",
-        "--tz"
+        "--tz",
+        "--taskset", "3"  # Affinity to CPU 3
       ]
       settle_sec: 2
     lattest:
       cmd: [
-        "cyclictest", "--mlockall", 
+        "cyclictest", "--mlockall", "--quiet",
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
@@ -96,12 +99,13 @@ rtbench:
         "--io",           "4",
         "--hdd",          "1",  "--hdd-write-size", "16K",
         "--timer",        "4",
-        "--tz"
+        "--tz",
+        "--taskset", "3"  # Affinity to CPU 3
       ]
       settle_sec: 2
     lattest:
       cmd: [
-        "cyclictest", "--mlockall", 
+        "cyclictest", "--mlockall", "--quiet",
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
@@ -122,12 +126,13 @@ rtbench:
         "--io",           "4",
         "--hdd",          "1",  "--hdd-write-size", "16K",
         "--timer",        "4",
-        "--tz"
+        "--tz",
+        "--taskset", "3"  # Affinity to CPU 3
       ]
       settle_sec: 2
     lattest:
       cmd: [
-        "cyclictest", "--mlockall",
+        "cyclictest", "--mlockall", "--quiet",
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
