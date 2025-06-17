@@ -23,7 +23,8 @@ rtbench:
       settle_sec: 1
     lattest:
       cmd: [
-        "cyclictest", "--mlockall", "--smp",
+        "taskset", "-c", "3",
+        "cyclictest", "--mlockall",
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
@@ -48,7 +49,8 @@ rtbench:
       settle_sec: 2
     lattest:
       cmd: [
-        "cyclictest", "--mlockall", "--smp",
+        "taskset", "-c", "3",
+        "cyclictest", "--mlockall", 
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
@@ -73,7 +75,8 @@ rtbench:
       settle_sec: 2
     lattest:
       cmd: [
-        "cyclictest", "--mlockall", "--smp",
+        "taskset", "-c", "3",
+        "cyclictest", "--mlockall", 
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
@@ -98,7 +101,8 @@ rtbench:
       settle_sec: 2
     lattest:
       cmd: [
-        "cyclictest", "--mlockall", "--smp",
+        "taskset", "-c", "3",
+        "cyclictest", "--mlockall", 
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
@@ -123,7 +127,8 @@ rtbench:
       settle_sec: 2
     lattest:
       cmd: [
-        "cyclictest", "--mlockall", "--smp",
+        "taskset", "-c", "3",
+        "cyclictest", "--mlockall",
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
