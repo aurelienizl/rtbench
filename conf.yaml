@@ -23,12 +23,12 @@ rtbench:
       settle_sec: 1
     lattest:
       cmd: [
-        "taskset", "-c", "3",
         "cyclictest", "--mlockall",
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
-        "--json"
+        "--json", 
+        "-a 3"  # Affinity to CPU 3
       ]
 
   # ── 25 % load ─────────────────────────────────────────────────────────────
@@ -49,12 +49,12 @@ rtbench:
       settle_sec: 2
     lattest:
       cmd: [
-        "taskset", "-c", "3",
         "cyclictest", "--mlockall", 
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
-        "--json"
+        "--json",
+        "-a 3"  # Affinity to CPU 3
       ]
 
   # ── 50 % load ─────────────────────────────────────────────────────────────
@@ -75,12 +75,12 @@ rtbench:
       settle_sec: 2
     lattest:
       cmd: [
-        "taskset", "-c", "3",
         "cyclictest", "--mlockall", 
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
-        "--json"
+        "--json",
+        "-a 3"  # Affinity to CPU 3
       ]
 
   # ── 75 % load ─────────────────────────────────────────────────────────────
@@ -101,12 +101,12 @@ rtbench:
       settle_sec: 2
     lattest:
       cmd: [
-        "taskset", "-c", "3",
         "cyclictest", "--mlockall", 
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
-        "--json"
+        "--json",
+        "-a 3"  # Affinity to CPU 3
       ]
 
   # ── 100 % load ────────────────────────────────────────────────────────────
@@ -127,10 +127,10 @@ rtbench:
       settle_sec: 2
     lattest:
       cmd: [
-        "taskset", "-c", "3",
         "cyclictest", "--mlockall",
         "--priority", "99", "--interval", "200",
         "--duration", "60s",
         "-h", "400000",
-        "--json"
+        "--json",
+        "-a 3"  # Affinity to CPU 3
       ]
